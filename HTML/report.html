@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Issue - CivicTrack</title>
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link rel="stylesheet" href="/CSS/dashboard.css">
+    <link rel="stylesheet" href="/CSS/report.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<!--
+<header class="site-header">
+  <h1><a href="index.html" class="site-logo">CivicTrack</a></h1>
+</header>
+-->
+<body>
+    <div class="report-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="brand">
+                <i class="fas fa-city"></i>
+                <span>CivicTrack</span>
+            </div>
+            <a href="dashboard.html" class="search-btn">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </header>
+        
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+            <a href="dashboard.html" class="nav-tab">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+            <span class="nav-separator">|</span>
+            <a href="report.html" class="nav-tab active">
+                <i class="fas fa-plus"></i>
+                Report Issue
+            </a>
+        </nav>
+        
+        <!-- Main Content -->
+        <div class="report-main">
+            <div class="container">
+                <div class="report-header">
+                    <h1>Report New Issue</h1>
+                    <p>Help improve your community by reporting local civic issues</p>
+                </div>
+                
+                <div class="report-form-container">
+                    <form id="report-form" class="report-form">
+                        <!-- Issue Title -->
+                        <div class="form-group">
+                            <label for="issue-title">
+                                <i class="fas fa-heading"></i>
+                                Issue Title *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="issue-title" 
+                                placeholder="Brief description of the issue (e.g., 'Large pothole on Main Street')" 
+                                required
+                                maxlength="100"
+                            >
+                            <small class="char-counter">0/100</small>
+                        </div>
+
+                        <!-- Category Selection -->
+                        <div class="form-group">
+                            <label for="issue-category">
+                                <i class="fas fa-tags"></i>
+                                Category *
+                            </label>
+                            <select id="issue-category" required>
+                                <option value="">Select Issue Category</option>
+                                <option value="roads">🛣️ Roads (potholes, obstructions, damaged surfaces)</option>
+                                <option value="lighting">💡 Lighting (broken or flickering streetlights)</option>
+                                <option value="water">💧 Water Supply (leaks, low pressure issues)</option>
+                                <option value="cleanliness">🗑️ Cleanliness (overflowing bins, garbage accumulation)</option>
+                                <option value="safety">⚠️ Public Safety (open manholes, exposed wiring)</option>
+                                <option value="obstructions">🌳 Obstructions (fallen trees, debris blocking pathways)</option>
+                            </select>
+                        </div>
+
+                        <!-- Issue Description -->
+                        <div class="form-group">
+                            <label for="issue-description">
+                                <i class="fas fa-align-left"></i>
+                                Detailed Description *
+                            </label>
+                            <textarea 
+                                id="issue-description" 
+                                placeholder="Provide a detailed description of the issue. Include specific location details, how long the issue has existed, and any safety concerns."
+                                rows="4" 
+                                required
+                                maxlength="500"
+                            ></textarea>
+                            <small class="char-counter">0/500</small>
+                        </div>
+
+                        <!-- Photo Upload -->
+                        <div class="form-group">
+                            <label for="issue-photos">
+                                <i class="fas fa-camera"></i>
+                                Photos (up to 3 images)
+                            </label>
+                            <div class="photo-upload-container">
+                                <input type="file" id="issue-photos" multiple accept="image/*" style="display: none;">
+                                <div class="upload-area" onclick="document.getElementById('issue-photos').click()">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <div class="upload-text">
+                                        <h4>Click to upload photos</h4>
+                                        <p>JPG, PNG, GIF up to 5MB each (Max 3 photos)</p>
+                                    </div>
+                                </div>
+                                <div id="photo-preview" class="photo-preview"></div>
+                            </div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="form-group">
+                            <label for="issue-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Location
+                            </label>
+                            <div class="location-input-container">
+                                <input 
+                                    type="text" 
+                                    id="issue-location" 
+                                    placeholder="Auto-detected location or enter manually"
+                                    readonly
+                                >
+                                <button type="button" id="detect-location" class="location-btn">
+                                    <i class="fas fa-crosshairs"></i>
+                                    Detect Location
+                                </button>
+                                <button type="button" id="manual-location" class="location-btn secondary">
+                                    <i class="fas fa-edit"></i>
+                                    Manual Entry
+                                </button>
+                            </div>
+                            <div class="location-status" id="location-status">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Location helps authorities respond faster</span>
+                            </div>
+                        </div>
+
+                        <!-- Priority Level -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Priority Level
+                            </label>
+                            <div class="priority-options">
+                                <label class="priority-option">
+                                    <input type="radio" name="priority" value="low" checked>
+                                    <span class="priority-indicator low"></span>
+                                    <div class="priority-label">
+                                        <strong>Low</strong>
+                                        <small>Minor inconvenience</small>
+                                    </div>
+                                </label>
+                                <label class="priority-option">
+                                    <input type="radio" name="priority" value="medium">
+                                    <span class="priority-indicator medium"></span>
+                                    <div class="priority-label">
+                                        <strong>Medium</strong>
+                                        <small>Moderate impact</small>
+                                    </div>
+                                </label>
+                                <label class="priority-option">
+                                    <input type="radio" name="priority" value="high">
+                                    <span class="priority-indicator high"></span>
+                                    <div class="priority-label">
+                                        <strong>High</strong>
+                                        <small>Safety concern</small>
+                                    </div>
+                                </label>
+                                <label class="priority-option">
+                                    <input type="radio" name="priority" value="urgent">
+                                    <span class="priority-indicator urgent"></span>
+                                    <div class="priority-label">
+                                        <strong>Urgent</strong>
+                                        <small>Immediate danger</small>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Anonymous Reporting -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-user"></i>
+                                Reporter Information
+                            </label>
+                            <div class="reporter-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="anonymous-report">
+                                    <span class="checkmark"></span>
+                                    <div class="checkbox-content">
+                                        <strong>Report anonymously</strong>
+                                        <small>Your identity will not be shared with authorities</small>
+                                    </div>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="follow-updates" checked>
+                                    <span class="checkmark"></span>
+                                    <div class="checkbox-content">
+                                        <strong>Follow issue updates</strong>
+                                        <small>Receive notifications about status changes</small>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information (conditional) -->
+                        <div class="form-group" id="contact-info" style="display: none;">
+                            <label>
+                                <i class="fas fa-address-book"></i>
+                                Contact Information (Optional)
+                            </label>
+                            <div class="contact-fields">
+                                <input type="tel" id="contact-phone" placeholder="Phone number">
+                                <input type="email" id="contact-email" placeholder="Email address">
+                            </div>
+                            <small class="field-note">Contact info helps authorities reach you for clarifications</small>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" onclick="window.history.back()">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="save-draft">
+                                <i class="fas fa-save"></i>
+                                Save Draft
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                                Submit Report
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Sidebar -->
+        <div class="progress-sidebar">
+            <div class="progress-container">
+                <h3>Report Progress</h3>
+                <div class="progress-steps">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Basic Info</strong>
+                            <small>Title & Category</small>
+                        </div>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Description</strong>
+                            <small>Details & Photos</small>
+                        </div>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Location</strong>
+                            <small>Where is the issue?</small>
+                        </div>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Submit</strong>
+                            <small>Review & Send</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tips Section -->
+            <div class="tips-container">
+                <h4><i class="fas fa-lightbulb"></i> Reporting Tips</h4>
+                <ul class="tips-list">
+                    <li>Be specific about the location</li>
+                    <li>Include clear photos if possible</li>
+                    <li>Describe safety impacts</li>
+                    <li>Mention how long the issue exists</li>
+                    <li>Add any relevant context</li>
+                </ul>
+            </div>
+        </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content success">
+            <div class="modal-header">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Report Submitted Successfully!</h2>
+            </div>
+            <div class="modal-body">
+                <p>Thank you for helping improve your community. Your issue has been reported and assigned ID: <strong id="issue-id">#0000</strong></p>
+                <div class="next-steps">
+                    <h4>What happens next?</h4>
+                    <ol>
+                        <li>Local authorities will review your report</li>
+                        <li>You'll receive status updates (if opted in)</li>
+                        <li>The issue will be tracked until resolution</li>
+                    </ol>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" onclick="reportAnother()">Report Another Issue</button>
+                    <button class="btn btn-primary" onclick="goToDashboard()">View Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/JS/report.js"></script>
+</body>
+</html>

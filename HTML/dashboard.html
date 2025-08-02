@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CivicTrack - Community Issue Reporting</title>
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link rel="stylesheet" href="/CSS/dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="brand">
+                <i class="fas fa-city"></i>
+                <span>CivicTrack</span>
+            </div>
+            <a href="search.html" class="search-btn">
+                <i class="fas fa-search"></i>
+                Search Issues
+            </a>
+        </header>
+        
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+            <a href="dashboard.html" class="nav-tab active">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+            <span class="nav-separator">|</span>
+            <a href="report.html" class="nav-tab">
+                <i class="fas fa-plus"></i>
+                Report Issue
+            </a>
+        </nav>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3><i class="fas fa-filter"></i> Filter Issues</h3>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <select id="category-filter">
+                        <option value="">All Categories</option>
+                        <option value="roads"> Roads (potholes, obstructions)</option>
+                        <option value="lighting"> Lighting (broken or flickering lights)</option>
+                        <option value="water"> Water Supply (leaks, low pressure)</option>
+                        <option value="cleanliness"> Cleanliness (overflowing bins, garbage)</option>
+                        <option value="safety"> Public Safety (open manholes, exposed wiring)</option>
+                        <option value="obstructions"> Obstructions (fallen trees, debris)</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <select id="status-filter">
+                        <option value="">All Statuses</option>
+                        <option value="reported"> Reported</option>
+                        <option value="in-progress"> In Progress</option>
+                        <option value="resolved"> Resolved</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <select id="distance-filter">
+                        <option value="">All Distances</option>
+                        <option value="1">📍 1 km radius</option>
+                        <option value="3">📍 3 km radius</option>
+                        <option value="5">📍 5 km radius</option>
+                    </select>
+                </div>
+                
+                <button class="filter-btn" onclick="applyFilters()">
+                    <i class="fas fa-search"></i>
+                    Apply
+                </button>
+                
+                <button class="clear-btn" onclick="clearFilters()">
+                    <i class="fas fa-times"></i>
+                    Clear
+                </button>
+            </div>
+            
+            <div class="filter-summary" id="filter-summary">
+                <span class="results-count">Showing all 6 issues</span>
+                <div class="active-filters" id="active-filters"></div>
+            </div>
+        </div>
+        
+        <!-- Issues Slider -->
+        <div class="slider-section">
+            <div class="slider-header">
+                <h3><i class="fas fa-list"></i> Community Issues</h3>
+            </div>
+            
+            <div class="slider-container">
+                <div class="slider-wrapper" id="slider-wrapper">
+                    <div class="slide" id="slide-0">
+                        <!-- Issues will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Mock data with enhanced details
+        const mockIssues = [
+            {
+                id: 1,
+                title: "Streetlight not working",
+                description: "Street light has been non-functional for 3 days, causing safety concerns.",
+                category: "lighting",
+                status: "in-progress",
+                location: "Main Street",
+                reporter: "Anonymous",
+                timestamp: new Date(Date.now() - 86400000 * 3),
+                images: ["/i"],
+                lat: 23.0225,
+                lng: 72.5714
+            },
+            {
+                id: 2,
+                title: "Pothole on main road",
+                description: "Large pothole causing damage to vehicles and creating traffic issues.",
+                category: "roads",
+                status: "reported",
+                location: "Oak Avenue",
+                reporter: "John Doe",
+                timestamp: new Date(Date.now() - 86400000 * 1),
+                images: ["pothole1.jpg"],
+                lat: 23.0278,
+                lng: 72.5626
+            },
+            {
+                id: 3,
+                title: "Garbage not collected",
+                description: "Garbage bins overflowing for over a week, attracting pests.",
+                category: "cleanliness",
+                status: "in-progress",
+                location: "Block C",
+                reporter: "Jane Smith",
+                timestamp: new Date(Date.now() - 86400000 * 7),
+                images: [],
+                lat: 23.0300,
+                lng: 72.5700
+            },
+            {
+                id: 4,
+                title: "Water leak on sidewalk",
+                description: "Continuous water leak from underground pipe causing flooding.",
+                category: "water",
+                status: "resolved",
+                location: "Park Avenue",
+                reporter: "Mike Johnson",
+                timestamp: new Date(Date.now() - 86400000 * 14),
+                images: [],
+                lat: 23.0215,
+                lng: 72.5800
+            },
+            {
+                id: 5,
+                title: "Broken street sign",
+                description: "Stop sign damaged and unclear, creating potential traffic hazard.",
+                category: "safety",
+                status: "reported",
+                location: "Elm & Pine",
+                reporter: "Anonymous",
+                timestamp: new Date(Date.now() - 86400000 * 2),
+                images: ["sign1.jpg"],
+                lat: 23.0230,
+                lng: 72.5690
+            },
+            {
+                id: 6,
+                title: "Tree blocking pathway",
+                description: "Fallen tree after storm blocking pedestrian walkway.",
+                category: "obstructions",
+                status: "in-progress",
+                location: "Central Park",
+                reporter: "Park Visitor",
+                timestamp: new Date(Date.now() - 86400000 * 4),
+                images: ["tree1.jpg", "tree2.jpg"],
+                lat: 23.0250,
+                lng: 72.5650
+            }
+        ];
+        
+        let filteredIssues = [...mockIssues];
+        let currentSlide = 0;
+        let issuesPerSlide = 3;
+        let totalSlides = 0;
+        const userLocation = { lat: 23.025, lng: 72.570 };
+        
+        // Calculate distance using Haversine formula
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // Apply filters
+        function applyFilters() {
+            const categoryFilter = document.getElementById('category-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            const distanceFilter = document.getElementById('distance-filter').value;
+            
+            filteredIssues = mockIssues.filter(issue => {
+                if (categoryFilter && issue.category !== categoryFilter) return false;
+                if (statusFilter && issue.status !== statusFilter) return false;
+                if (distanceFilter) {
+                    const distance = calculateDistance(
+                        userLocation.lat, userLocation.lng,
+                        issue.lat, issue.lng
+                    );
+                    if (distance > parseInt(distanceFilter)) return false;
+                }
+                return true;
+            });
+            
+            updateFilterSummary(categoryFilter, statusFilter, distanceFilter);
+            currentSlide = 0;
+            renderSlider();
+            showAlert(`Found ${filteredIssues.length} issues matching your criteria`, 'success');
+        }
+        
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('category-filter').value = '';
+            document.getElementById('status-filter').value = '';
+            document.getElementById('distance-filter').value = '';
+            
+            filteredIssues = [...mockIssues];
+            updateFilterSummary();
+            currentSlide = 0;
+            renderSlider();
+            showAlert('All filters cleared', 'info');
+        }
+        
+        // Update filter summary
+        function updateFilterSummary(category, status, distance) {
+            const summaryElement = document.getElementById('filter-summary');
+            const countElement = summaryElement.querySelector('.results-count');
+            const filtersElement = document.getElementById('active-filters');
+            
+            countElement.textContent = `Showing ${filteredIssues.length} of ${mockIssues.length} issues`;
+            
+            const activeFilters = [];
+            if (category) activeFilters.push(`Category: ${getCategoryLabel(category)}`);
+            if (status) activeFilters.push(`Status: ${getStatusLabel(status)}`);
+            if (distance) activeFilters.push(`Within: ${distance} km`);
+            
+            if (activeFilters.length > 0) {
+                filtersElement.innerHTML = `
+                    <strong>Active Filters:</strong>
+                    ${activeFilters.map(filter => `<span class="filter-tag">${filter}</span>`).join('')}
+                `;
+            } else {
+                filtersElement.innerHTML = '';
+            }
+        }
+        
+        // Render slider
+        function renderSlider() {
+            totalSlides = Math.ceil(filteredIssues.length / issuesPerSlide);
+            const sliderWrapper = document.getElementById('slider-wrapper');
+            
+            // Create slides
+            sliderWrapper.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+                slide.id = `slide-${i}`;
+                
+                const startIndex = i * issuesPerSlide;
+                const endIndex = Math.min(startIndex + issuesPerSlide, filteredIssues.length);
+                const slideIssues = filteredIssues.slice(startIndex, endIndex);
+                
+                slide.innerHTML = slideIssues.map(issue => `
+                    <div class="issue-card ${issue.status}" onclick="showIssueDetail(${issue.id})">
+                        <div class="issue-image">
+                            <i class="${getCategoryIcon(issue.category)}"></i>
+                            <div class="issue-status-badge ${issue.status}">
+                                ${getStatusLabel(issue.status)}
+                            </div>
+                        </div>
+                        <div class="issue-content">
+                            <h3 class="issue-title">${issue.title}</h3>
+                            <p class="issue-description">${issue.description}</p>
+                            <div class="issue-meta">
+                                <span class="issue-time">
+                                    <i class="fas fa-clock"></i>
+                                    ${formatTimeAgo(issue.timestamp)}
+                                </span>
+                                <span class="issue-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${issue.location}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                sliderWrapper.appendChild(slide);
+            }
+            
+            updateSliderPosition();
+        }
+        
+        // Slider navigation
+        function slideLeft() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSliderPosition();
+            }
+        }
+        
+        function slideRight() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateSliderPosition();
+            }
+        }
+        
+        function goToSlide(slideIndex) {
+            currentSlide = slideIndex;
+            updateSliderPosition();
+        }
+        
+        // Update slider position
+        function updateSliderPosition() {
+            const sliderWrapper = document.getElementById('slider-wrapper');
+            const translateX = -currentSlide * 100;
+            sliderWrapper.style.transform = `translateX(${translateX}%)`;
+            
+            // Update controls
+            document.getElementById('slider-left-btn').disabled = currentSlide === 0;
+            document.getElementById('slider-right-btn').disabled = currentSlide === totalSlides - 1;
+            document.getElementById('slide-indicator').textContent = `${currentSlide + 1} / ${totalSlides}`;
+        }
+        
+        // Utility functions
+        function getCategoryIcon(category) {
+            const icons = {
+                roads: 'fas fa-road',
+                lighting: 'fas fa-lightbulb',
+                water: 'fas fa-tint',
+                cleanliness: 'fas fa-trash',
+                safety: 'fas fa-exclamation-triangle',
+                obstructions: 'fas fa-tree'
+            };
+            return icons[category] || 'fas fa-question';
+        }
+        
+        function getCategoryLabel(category) {
+            const labels = {
+                roads: 'Roads',
+                lighting: 'Lighting',
+                water: 'Water Supply',
+                cleanliness: 'Cleanliness',
+                safety: 'Public Safety',
+                obstructions: 'Obstructions'
+            };
+            return labels[category] || category;
+        }
+        
+        function getStatusLabel(status) {
+            const labels = {
+                'reported': 'Reported',
+                'in-progress': 'In Progress',
+                'resolved': 'Resolved'
+            };
+            return labels[status] || status;
+        }
+        
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) return 'Today';
+            if (days === 1) return 'Yesterday';
+            if (days < 7) return `${days} days ago`;
+            return date.toLocaleDateString();
+        }
+        
+        function showIssueDetail(issueId) {
+            const issue = mockIssues.find(i => i.id === issueId);
+            localStorage.setItem('selected_issue', JSON.stringify(issue));
+            window.location.href = 'issue-detail.html';
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+            Object.assign(alert.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                background: type === 'success' ? '#10b981' : '#3b82f6',
+                color: 'white',
+                padding: '12px 20px',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                zIndex: '9999',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+            });
+            document.body.appendChild(alert);
+            setTimeout(() => document.body.removeChild(alert), 3000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFilterSummary();
+            renderSlider();
+        });
+    </script>
+</body>
+</html>

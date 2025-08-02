@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - CivicTrack</title>
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link rel="stylesheet" href="/CSS/auth.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <!-- Header matching mockup -->
+        <div class="auth-header">
+            <div class="brand">
+                <i class="fas fa-city"></i>
+                <span>CivicTrack</span>
+            </div>
+            <a href="dashboard.html" class="home-btn">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </div>
+        
+        <div class="auth-main">
+            <div class="auth-content">
+                <div class="form-container">
+                    <h2>User Registration Page</h2>
+                   
+                    
+                    <form id="register-form" class="auth-form">
+                        <div class="form-group">
+                            <input type="text" id="reg-username" placeholder="User Name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="email" id="reg-email" placeholder="Email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="tel" id="reg-phone" placeholder="Phone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="password" id="reg-password" placeholder="Password" required>
+                        </div>
+                        
+                        <div class="form-footer">
+                            <span>Already have an account? 
+                                <a href="login.html">Login</a>
+                            </span>
+                        </div>
+                        
+                        <button type="submit" class="auth-btn register-btn">
+                            <i class="fas fa-user-plus"></i>
+                            Register
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+    
+    <script>
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('reg-username').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            
+            if (!username || !email || !phone || !password) {
+                showAlert('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showAlert('Please enter a valid email address.', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert('Password must be at least 6 characters long.', 'error');
+                return;
+            }
+            
+            // Show loading
+            const btn = this.querySelector('button');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                // Store user data
+                localStorage.setItem('civictrack_user', JSON.stringify({
+                    username: username,
+                    email: email,
+                    phone: phone,
+                    registrationTime: new Date().toISOString()
+                }));
+                
+                showAlert('Registration successful!', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            }, 1000);
+        });
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            Object.assign(alert.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                background: type === 'success' ? '#38a169' : '#e53e3e',
+                color: 'white',
+                padding: '15px 20px',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                zIndex: '9999',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+            });
+            document.body.appendChild(alert);
+            setTimeout(() => document.body.removeChild(alert), 3000);
+        }
+    </script>
+</body>
+</html>

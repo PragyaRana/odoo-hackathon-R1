@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Issues - CivicTrack</title>
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link rel="stylesheet" href="/CSS/search.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="search-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="brand">
+                <i class="fas fa-city"></i>
+                <span>CivicTrack</span>
+            </div>
+            <a href="dashboard.html" class="search-btn">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </header>
+        
+        <!-- Search Interface exactly as Screen 4 mockup -->
+        <div class="search-section">
+            <h2>User name page</h2>
+            <h3>Screen 4</h3>
+            
+            <!-- Filter controls matching mockup -->
+            <div class="search-controls">
+                <div class="filter-row">
+                    <select id="category-filter">
+                        <option value="">Category</option>
+                        <option value="roads">Roads</option>
+                        <option value="lighting">Lighting</option>
+                        <option value="water">Water</option>
+                        <option value="cleanliness">Cleanliness</option>
+                        <option value="safety">Safety</option>
+                    </select>
+                    
+                    <select id="status-filter">
+                        <option value="">Status</option>
+                        <option value="reported">Reported</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                    
+                    <select id="distance-filter">
+                        <option value="5">Distance</option>
+                        <option value="1">1 km</option>
+                        <option value="3">3 km</option>
+                        <option value="5">5 km</option>
+                    </select>
+                    
+                    <button class="search-issues-btn" onclick="performSearch()">
+                        <i class="fas fa-search"></i>
+                        Search Issues
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Status column as shown in mockup -->
+            <div class="status-column">
+                <div class="status-item in-progress">
+                    <i class="fas fa-tools"></i>
+                    <div class="status-content">
+                        <span class="status-label">In Progress</span>
+                        <small>Reported by Anonymous</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Location and map section -->
+            <div class="map-section">
+                <div class="location-display">
+                    <span class="location-label">Location</span>
+                    <span class="location-value">S.G road, ahmedabad, gujarat</span>
+                </div>
+                <div class="map-placeholder">
+                    <i class="fas fa-map"></i>
+                    <p>Interactive Map</p>
+                    <small>Issues will be displayed as pins</small>
+                </div>
+            </div>
+            
+            <!-- Screen 5 Report Section as shown in mockup -->
+            <div class="report-section">
+                <h3>Screen 5</h3>
+                <div class="profile-section">
+                    <div class="profile-badge">Excited Woodcock</div>
+                    
+                    <div class="report-controls">
+                        <button class="report-new-btn" onclick="toggleReportForm()">
+                            <i class="fas fa-times"></i>
+                            Report New Issue
+                        </button>
+                        
+                        <div class="quick-report-form" id="quick-report-form" style="display: none;">
+                            <div class="upload-section">
+                                <p>Add/Upload Photos</p>
+                                <div class="photo-placeholder" onclick="document.getElementById('quick-photos').click()">
+                                    <i class="fas fa-image"></i>
+                                    <input type="file" id="quick-photos" multiple accept="image/*" style="display: none;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-fields">
+                                <div class="category-section">
+                                    <label>Category</label>
+                                    <select id="quick-category">
+                                        <option>Select Category</option>
+                                        <option value="roads">Roads</option>
+                                        <option value="lighting">Lighting</option>
+                                        <option value="water">Water</option>
+                                        <option value="cleanliness">Cleanliness</option>
+                                        <option value="safety">Safety</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="description-section">
+                                    <label>Description</label>
+                                    <textarea id="quick-description" rows="4" placeholder="Describe the issue..."></textarea>
+                                </div>
+                                
+                                <div class="anonymous-check">
+                                    <input type="checkbox" id="quick-anonymous">
+                                    <label for="quick-anonymous">Report anonymously</label>
+                                </div>
+                                
+                                <button class="submit-issue-btn" onclick="submitQuickIssue()">
+                                    <i class="fas fa-paper-plane"></i>
+                                    Submit Issue
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search results -->
+        <div class="search-results" id="search-results">
+            <!-- Results populated by JavaScript -->
+        </div>
+        
+        <!-- User indicators exactly as shown in mockup -->
+        <div class="search-indicators">
+            <div class="user-badge teal">Subhaan Tanger</div>
+            <div class="user-badge purple">Incredible Trout</div>
+            <div class="user-badge yellow">Celebrated Stingray</div>
+            <div class="user-badge blue">Athletic Crab</div>
+            <div class="user-badge orange">Gleaming</div>
+            <div class="user-badge green">Proud Bear</div>
+        </div>
+    </div>
+    
+    <script>
+        let searchResults = [];
+        let showingReportForm = false;
+        
+        // Use same mock data as dashboard
+        const mockIssues = [
+            {
+                id: 1,
+                title: "Streetlight not working",
+                description: "Street light has been non-functional for 3 days, causing safety concerns.",
+                category: "lighting",
+                status: "in-progress",
+                location: "Main Street",
+                reporter: "Anonymous",
+                timestamp: new Date(Date.now() - 86400000 * 3),
+                images: ["streetlight1.jpg"]
+            },
+            {
+                id: 2,
+                title: "Pothole on main road",
+                description: "Large pothole causing damage to vehicles and creating traffic issues.",
+                category: "roads",
+                status: "reported",
+                location: "Oak Avenue",
+                reporter: "John Doe",
+                timestamp: new Date(Date.now() - 86400000 * 1),
+                images: ["pothole1.jpg"]
+            },
+            {
+                id: 3,
+                title: "Garbage not collected",
+                description: "Garbage bins overflowing for over a week, attracting pests.",
+                category: "cleanliness",
+                status: "in-progress",
+                location: "Block C",
+                reporter: "Jane Smith",
+                timestamp: new Date(Date.now() - 86400000 * 7),
+                images: []
+            }
+        ];
+        
+        function performSearch() {
+            const category = document.getElementById('category-filter').value;
+            const status = document.getElementById('status-filter').value;
+            const distance = document.getElementById('distance-filter').value;
+            
+            // Show loading
+            const btn = document.querySelector('.search-issues-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                // Filter results
+                searchResults = mockIssues.filter(issue => {
+                    if (category && issue.category !== category) return false;
+                    if (status && issue.status !== status) return false;
+                    return true;
+                });
+                
+                renderSearchResults();
+                
+                // Reset button
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                showAlert(`Found ${searchResults.length} issues matching your criteria`, 'info');
+            }, 800);
+        }
+        
+        function renderSearchResults() {
+            const resultsContainer = document.getElementById('search-results');
+            
+            if (searchResults.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No Issues Found</h3>
+                        <p>Try adjusting your search filters.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultsContainer.innerHTML = `
+                <div class="search-results-header">
+                    <h3>Search Results (${searchResults.length} issues found)</h3>
+                </div>
+                <div class="results-grid">
+                    ${searchResults.map(issue => `
+                        <div class="result-card" onclick="viewIssueDetail(${issue.id})">
+                            <div class="result-header">
+                                <div class="result-icon">
+                                    <i class="${getCategoryIcon(issue.category)}"></i>
+                                </div>
+                                <div class="result-status ${issue.status}">
+                                    ${getStatusLabel(issue.status)}
+                                </div>
+                            </div>
+                            <div class="result-content">
+                                <h4>${issue.title}</h4>
+                                <p>${issue.description}</p>
+                                <div class="result-meta">
+                                    <span><i class="fas fa-map-marker-alt"></i> ${issue.location}</span>
+                                    <span><i class="fas fa-clock"></i> ${formatTimeAgo(issue.timestamp)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function toggleReportForm() {
+            const form = document.getElementById('quick-report-form');
+            const btn = document.querySelector('.report-new-btn');
+            
+            showingReportForm = !showingReportForm;
+            
+            if (showingReportForm) {
+                form.style.display = 'block';
+                btn.innerHTML = '<i class="fas fa-check"></i> Close Form';
+                btn.style.background = '#38a169';
+            } else {
+                form.style.display = 'none';
+                btn.innerHTML = '<i class="fas fa-times"></i> Report New Issue';
+                btn.style.background = '#e53e3e';
+            }
+        }
+        
+        function submitQuickIssue() {
+            const category = document.getElementById('quick-category').value;
+            const description = document.getElementById('quick-description').value.trim();
+            const anonymous = document.getElementById('quick-anonymous').checked;
+            
+            if (!category || !description) {
+                showAlert('Please fill in all required fields.', 'error');
+                return;
+            }
+            
+            // Create new issue
+            const newIssue = {
+                id: mockIssues.length + 1,
+                title: description.split(' ').slice(0, 5).join(' ') + '...',
+                description: description,
+                category: category,
+                status: 'reported',
+                location: 'Current Location',
+                reporter: anonymous ? 'Anonymous' : 'Current User',
+                timestamp: new Date(),
+                images: []
+            };
+            
+            mockIssues.unshift(newIssue);
+            
+            // Reset form
+            document.getElementById('quick-category').value = '';
+            document.getElementById('quick-description').value = '';
+            document.getElementById('quick-anonymous').checked = false;
+            
+            toggleReportForm();
+            showAlert('Issue reported successfully!', 'success');
+        }
+        
+        function viewIssueDetail(issueId) {
+            const issue = mockIssues.find(i => i.id === issueId);
+            localStorage.setItem('selected_issue', JSON.stringify(issue));
+            window.location.href = 'issue-detail.html';
+        }
+        
+        // Utility functions
+        function getCategoryIcon(category) {
+            const icons = {
+                roads: 'fas fa-road',
+                lighting: 'fas fa-lightbulb',
+                water: 'fas fa-tint',
+                cleanliness: 'fas fa-trash',
+                safety: 'fas fa-exclamation-triangle',
+                obstructions: 'fas fa-tree'
+            };
+            return icons[category] || 'fas fa-question';
+        }
+        
+        function getStatusLabel(status) {
+            const labels = {
+                'reported': 'Reported',
+                'in-progress': 'In Progress',
+                'resolved': 'Resolved'
+            };
+            return labels[status] || status;
+        }
+        
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) return 'Today';
+            if (days === 1) return 'Yesterday';
+            if (days < 7) return `${days} days ago`;
+            return date.toLocaleDateString();
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
+            Object.assign(alert.style, {
+                position: 'fixed',
+                top: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: '#4299e1',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '25px',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                zIndex: '9999'
+            });
+            document.body.appendChild(alert);
+            setTimeout(() => document.body.removeChild(alert), 3000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            searchResults = [...mockIssues];
+            renderSearchResults();
+        });
+    </script>
+</body>
+</html>

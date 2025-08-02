@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Details - CivicTrack</title>
+    <link rel="stylesheet" href="/CSS/style.css">
+    <link rel="stylesheet" href="/CSS/issue-detail.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="detail-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="brand">
+                <i class="fas fa-city"></i>
+                <span>CivicTrack</span>
+            </div>
+            <a href="dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </header>
+        
+        <!-- Issue Details exactly matching the screenshot -->
+        <div class="detail-content" id="detail-content">
+            <!-- Content will be populated to match the screenshot -->
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            renderIssueDetailFromStorage();
+        });
+
+        function renderIssueDetailFromStorage() {
+            // Get selected issue from localStorage
+            const issue = JSON.parse(localStorage.getItem('selected_issue') || 'null');
+            if (!issue) {
+                document.getElementById('detail-content').innerHTML = `
+                    <div class="no-issue-detail">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>No Issue Selected</h3>
+                        <a href="dashboard.html" class="btn btn-primary">Back to Dashboard</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Render the content using the selected issue
+            const detailContent = document.getElementById('detail-content');
+            detailContent.innerHTML = `
+                <div class="issue-detail-card">
+                    <div class="detail-header-section">
+                        <div class="issue-header-content">
+                            <div class="issue-icon-wrapper">
+                                <div class="issue-icon warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                            </div>
+                            <div class="issue-title-wrapper">
+                                <h1 class="issue-main-title">${issue.title}</h1>
+                                <div class="issue-status-wrapper">
+                                    <span class="status-pill reported">${issue.status}</span>
+                                    <span class="category-pill roads">${issue.category}</span>
+                                    <span class="priority-pill medium">${issue.priority}</span>
+                                    <span class="id-pill">ID: ${issue.id}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <i class="fas fa-align-left"></i>
+                            <h3>Description</h3>
+                        </div>
+                        <div class="description-content">
+                            <p>${issue.description}</p>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <i class="fas fa-info-circle"></i>
+                            <h3>Issue Information</h3>
+                        </div>
+                        <div class="info-cards-grid">
+                            <div class="info-card">
+                                <div class="info-card-icon location-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="info-card-content">
+                                    <div class="info-label">LOCATION</div>
+                                    <div class="info-value">${issue.location}</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-icon reporter-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="info-card-content">
+                                    <div class="info-label">REPORTED BY</div>
+                                    <div class="info-value">${issue.reporter}</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-icon date-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="info-card-content">
+                                    <div class="info-label">DATE REPORTED</div>
+                                    <div class="info-value">${issue.date}</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-icon time-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="info-card-content">
+                                    <div class="info-label">TIME AGO</div>
+                                    <div class="info-value">${issue.timeAgo || ''}</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-icon priority-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="info-card-content">
+                                    <div class="info-label">PRIORITY LEVEL</div>
+                                    <div class="info-value">${issue.priority}</div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-card-icon estimate-icon">
+                                    <i class="fas fa-hourglass-half"></i>
+                                </div>
+                                <div class="info-card-content">
+                                    <div class="info-label">EST. RESOLUTION</div>
+                                    <div class="info-value">TBD</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <i class="fas fa-images"></i>
+                            <h3>Photos (1)</h3>
+                        </div>
+                        <div class="photos-container">
+                            <div class="single-photo-item">
+                                <div class="photo-placeholder-small">
+                                    <i class="fas fa-image"></i>
+                                    <span>${issue.photo || 'No photo'}</span>
+                                </div>
+                            </div>
+                            <p class="photo-note">
+                                <i class="fas fa-info-circle"></i>
+                                Click on any photo to view in full size
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="section-header">
+                            <i class="fas fa-history"></i>
+                            <h3>Status Timeline</h3>
+                        </div>
+                        <div class="timeline-container">
+                            ${(issue.timeline || []).map(t => `
+                                <div class="timeline-item ${t.completed ? 'completed' : 'pending'}">
+                                    <div class="timeline-marker${t.completed ? '' : ' pending'}"></div>
+                                    <div class="timeline-content-box">
+                                        <div class="timeline-title">${t.title}</div>
+                                        <div class="timeline-description">${t.desc}</div>
+                                        <div class="timeline-time">${t.time}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="action-buttons-section">
+                        <button class="action-btn back-btn" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button class="action-btn share-btn" onclick="shareIssue()">
+                            <i class="fas fa-share"></i>
+                            Share Issue
+                        </button>
+                        <button class="action-btn follow-btn" onclick="followUpdates()">
+                            <i class="fas fa-bell"></i>
+                            Follow Updates
+                        </button>
+                        <button class="action-btn report-btn" onclick="reportSimilar()">
+                            <i class="fas fa-plus"></i>
+                            Report Similar Issue
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Action functions
+        function shareIssue() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'CivicTrack Issue',
+                    text: 'Check out this issue on CivicTrack',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    showAlert('Issue link copied to clipboard!');
+                });
+            }
+        }
+
+        function followUpdates() {
+            showAlert('You are now following this issue for updates!');
+        }
+
+        function reportSimilar() {
+            window.location.href = 'report.html';
+        }
+
+        function showAlert(message) {
+            const alert = document.createElement('div');
+            alert.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            Object.assign(alert.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                background: '#38a169',
+                color: 'white',
+                padding: '15px 20px',
+                borderRadius: '8px',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                zIndex: '9999',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px'
+            });
+            document.body.appendChild(alert);
+            setTimeout(() => document.body.removeChild(alert), 3000);
+        }
+    </script>
+</body>
+</html>
